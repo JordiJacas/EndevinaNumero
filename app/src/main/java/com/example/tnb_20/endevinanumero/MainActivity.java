@@ -16,6 +16,8 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
+    protected int nIntents;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         final TextView textV = findViewById(R.id.txtView);
         Random rNumber = new Random();
         final int number = rNumber.nextInt(100) + 1;
-        final int nIntents = 0;
+        nIntents = 0;
 
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -45,11 +47,14 @@ public class MainActivity extends AppCompatActivity {
                 int iNumber = Integer.parseInt(text.getText().toString());
                 if(number < iNumber){
                     textV.setText("El numero es menor de " + iNumber);
-                    nIntents = nIntents + 1;
+                    nIntents++;
                 }else if (number > iNumber){
                     textV.setText("El numero es mayor de " + iNumber);
+                    nIntents++;
                 }else if(number == iNumber){
-                    textV.setText("Has adivinado el numero " + iNumber);
+                    textV.setText("Has adivinado el numero " + iNumber + ", Numero de intentos: " + nIntents);
+                    nIntents = 0;
+
                 }
 
 
