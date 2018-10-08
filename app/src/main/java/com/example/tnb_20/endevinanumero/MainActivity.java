@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         final Button button = findViewById(R.id.btnEndevina);
         final EditText text = findViewById(R.id.textInt);
-        final TextView textV = findViewById(R.id.txtView);
+        //final TextView textV = findViewById(R.id.txtView);
         final Random rNumber = new Random();
         number = rNumber.nextInt(100) + 1;
         nIntents = 0;
@@ -47,13 +48,22 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int iNumber = Integer.parseInt(text.getText().toString());
                 if(number < iNumber){
-                    textV.setText("El numero es menor de " + iNumber);
+                    //textV.setText("El numero es menor de " + iNumber);
+                    Toast toast = Toast.makeText(getApplicationContext(),"El numero es menor de " + iNumber, Toast.LENGTH_SHORT);
+                    toast.show();
+                    text.setText("");
                     nIntents++;
                 }else if (number > iNumber){
-                    textV.setText("El numero es mayor de " + iNumber);
+                   // textV.setText("El numero es mayor de " + iNumber);
+                    Toast toast = Toast.makeText(getApplicationContext(),"El numero es mayor de " + iNumber, Toast.LENGTH_SHORT);
+                    toast.show();
+                    text.setText("");
                     nIntents++;
                 }else if(number == iNumber){
-                    textV.setText("Has adivinado el numero " + iNumber + ", Numero de intentos: " + nIntents + ", Torna a començar");
+                    //textV.setText("Has adivinado el numero " + iNumber + ", Numero de intentos: " + nIntents + ", Torna a començar");
+                    Toast toast = Toast.makeText(getApplicationContext(),"Has endevinat el numero " + iNumber + "/n Numero de intents: " + nIntents, Toast.LENGTH_SHORT);
+                    toast.show();
+                    text.setText("");
                     nIntents = 0;
                     number = rNumber.nextInt(100) + 1;
                 }
