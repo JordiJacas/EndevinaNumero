@@ -1,5 +1,6 @@
 package com.example.tnb_20.endevinanumero;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,10 +19,13 @@ import android.view.View.OnKeyListener;
 
 import java.util.Random;
 
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
+
 public class MainActivity extends AppCompatActivity {
 
     protected int nIntents;
     protected int number;
+    public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +130,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /** Called when the user taps the Send button */
+    public void sendMessage(View view) {
+        Intent intent = new Intent(this, Main2Activity.class);
+        //EditText editText = (EditText) findViewById(R.id.textInt);
+        int message = nIntents;
+        intent.putExtra("int_variable", message);
+        startActivity(intent);
     }
 
 
