@@ -136,8 +136,7 @@ public class MainActivity extends AppCompatActivity {
     public void sendMessage(View view) {
         Intent intent = new Intent(this, Main2Activity.class);
         //EditText editText = (EditText) findViewById(R.id.textInt);
-        int message = nIntents;
-        intent.putExtra("int_variable", message);
+        intent.putExtra("int_value",nIntents);
         startActivity(intent);
     }
 
