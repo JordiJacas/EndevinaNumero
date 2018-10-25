@@ -9,7 +9,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class Main2Activity extends AppCompatActivity {
+    public class Record {
+        public int intentos;
+        public String nombre;
+
+        public Record(String nombre, int intentos){
+            this.nombre = nombre;
+            this.intentos = intentos;
+        }
+    }
+
+    ArrayList<Record> records = new ArrayList<Record>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
