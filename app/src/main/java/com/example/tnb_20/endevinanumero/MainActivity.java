@@ -1,5 +1,6 @@
 package com.example.tnb_20.endevinanumero;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -49,8 +50,7 @@ public class MainActivity extends AppCompatActivity {
         final Random rNumber = new Random();
         number = rNumber.nextInt(100) + 1;
         nIntents = 0;
-
-
+        text.setText(Integer.toString(number));
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 int iNumber = Integer.parseInt(text.getText().toString());
@@ -73,9 +73,12 @@ public class MainActivity extends AppCompatActivity {
                     text.setText("");
                     nIntents = 0;
                     number = rNumber.nextInt(100) + 1;
+                    alertView("hello");
                 }
             }
         });
+
+
 
         text.setOnKeyListener(new OnKeyListener() {
 
@@ -97,12 +100,14 @@ public class MainActivity extends AppCompatActivity {
                         text.setText("");
                         nIntents++;
                     }else if(number == iNumber){
+                        alertView("Hello");
                         //textV.setText("Has adivinado el numero " + iNumber + ", Numero de intentos: " + nIntents + ", Torna a començar");
-                        Toast toast = Toast.makeText(getApplicationContext(),"Has endevinat el numero " + iNumber + "/n Numero de intents: " + nIntents, Toast.LENGTH_SHORT);
+                        Toast toast = Toast.makeText(getApplicationContext(),"Has endevinat el numero " + iNumber + "\n Numero de intents: " + nIntents, Toast.LENGTH_SHORT);
                         toast.show();
                         text.setText("");
                         nIntents = 0;
                         number = rNumber.nextInt(100) + 1;
+
                     }
                 }
                 return false;
@@ -138,6 +143,14 @@ public class MainActivity extends AppCompatActivity {
         //EditText editText = (EditText) findViewById(R.id.textInt);
         intent.putExtra("int_value",nIntents);
         startActivity(intent);
+    }
+
+    private void alertView( String message ) {
+        Dialog dialog = new Dialog(MainActivity.this);
+        dialog.setTitle( "Hello" );
+        dialog.setContentView(R.layout.layaout_dialog);
+        dialog.show();
+
     }
 
 

@@ -37,16 +37,9 @@ public class Main2Activity extends AppCompatActivity {
         // Capture the layout's TextView and set the string as its text
         TextView textView = findViewById(R.id.textView);
         textView.setText(Integer.toString(temp));
-
-        //alertView("Hello");
     }
 
-    private void alertView( String message ) {
-        Dialog dialog = new Dialog(getApplication());
-        dialog.setTitle( "Hello" );
-        dialog.setContentView(R.layout.layout_dialog);
-        dialog.show();
-    }
+
 
 
 }
