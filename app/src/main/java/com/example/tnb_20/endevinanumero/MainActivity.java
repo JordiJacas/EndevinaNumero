@@ -25,7 +25,9 @@ import static android.provider.AlarmClock.EXTRA_MESSAGE;
 public class MainActivity extends AppCompatActivity {
 
     protected int nIntents;
+    protected int lastIntents;
     protected int number;
+    protected  String tName;
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
 
     @Override
@@ -67,50 +69,16 @@ public class MainActivity extends AppCompatActivity {
                     text.setText("");
                     nIntents++;
                 }else if(number == iNumber){
+                    nIntents++;
+                    lastIntents = nIntents;
                     //textV.setText("Has adivinado el numero " + iNumber + ", Numero de intentos: " + nIntents + ", Torna a començar");
-                    Toast toast = Toast.makeText(getApplicationContext(),"Has endevinat el numero " + iNumber + "/n Numero de intents: " + nIntents, Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getApplicationContext(),"Has endevinat el numero " + iNumber + "\n Numero de intents: " + lastIntents, Toast.LENGTH_SHORT);
                     toast.show();
                     text.setText("");
                     nIntents = 0;
                     number = rNumber.nextInt(100) + 1;
                     alertView("hello");
                 }
-            }
-        });
-
-
-
-        text.setOnKeyListener(new OnKeyListener() {
-
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // TODO Auto-generated method stub
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    int iNumber = Integer.parseInt(text.getText().toString());
-                    if(number < iNumber){
-                        //textV.setText("El numero es menor de " + iNumber);
-                        Toast toast = Toast.makeText(getApplicationContext(),"El numero es menor de " + iNumber, Toast.LENGTH_SHORT);
-                        toast.show();
-                        text.setText("");
-                        nIntents++;
-                    }else if (number > iNumber){
-                        // textV.setText("El numero es mayor de " + iNumber);
-                        Toast toast = Toast.makeText(getApplicationContext(),"El numero es mayor de " + iNumber, Toast.LENGTH_SHORT);
-                        toast.show();
-                        text.setText("");
-                        nIntents++;
-                    }else if(number == iNumber){
-                        alertView("Hello");
-                        //textV.setText("Has adivinado el numero " + iNumber + ", Numero de intentos: " + nIntents + ", Torna a començar");
-                        Toast toast = Toast.makeText(getApplicationContext(),"Has endevinat el numero " + iNumber + "\n Numero de intents: " + nIntents, Toast.LENGTH_SHORT);
-                        toast.show();
-                        text.setText("");
-                        nIntents = 0;
-                        number = rNumber.nextInt(100) + 1;
-
-                    }
-                }
-                return false;
             }
         });
     }
@@ -141,14 +109,34 @@ public class MainActivity extends AppCompatActivity {
     public void sendMessage(View view) {
         Intent intent = new Intent(this, Main2Activity.class);
         //EditText editText = (EditText) findViewById(R.id.textInt);
-        intent.putExtra("int_value",nIntents);
+        intent.putExtra("int_value", lastIntents);
+        intent.putExtra("string_name", tName);
+
         startActivity(intent);
+        //startActivity(intent2);
     }
 
     private void alertView( String message ) {
-        Dialog dialog = new Dialog(MainActivity.this);
+        final Dialog dialog = new Dialog(MainActivity.this);
         dialog.setTitle( "Hello" );
         dialog.setContentView(R.layout.layaout_dialog);
+        Button btnOK = dialog.findViewById(R.id.btnok);
+        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditText name = dialog.findViewById(R.id.editTextName);
+                tName = name.getText().toString();
+                dialog.dismiss();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
         dialog.show();
 
     }

@@ -32,11 +32,14 @@ public class Main2Activity extends AppCompatActivity {
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
         //String temp = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        int temp = intent.getIntExtra("int_value",0);
+        int intentos = intent.getIntExtra("int_value",0);
+        String nombre = intent.getStringExtra("string_name");
 
         // Capture the layout's TextView and set the string as its text
-        TextView textView = findViewById(R.id.textView);
-        textView.setText(Integer.toString(temp));
+        TextView textView = findViewById(R.id.txtI);
+        TextView textView2 = findViewById(R.id.txtN);
+        textView.setText(Integer.toString(intentos));
+        textView2.setText(nombre);
     }
 
 
