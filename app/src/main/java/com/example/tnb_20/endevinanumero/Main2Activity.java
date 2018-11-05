@@ -1,10 +1,6 @@
 package com.example.tnb_20.endevinanumero;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,10 +10,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class Main2Activity extends AppCompatActivity {
+
+    public recordtest o = new recordtest();
     public class Record implements Comparable<Record>{
         public int intentos;
         public String nombre;
