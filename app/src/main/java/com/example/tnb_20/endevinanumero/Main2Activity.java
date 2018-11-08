@@ -14,27 +14,6 @@ import java.util.Collections;
 
 public class Main2Activity extends AppCompatActivity {
 
-    public recordtest o = new recordtest();
-    public class Record implements Comparable<Record>{
-        public int intentos;
-        public String nombre;
-
-        public Record(String nombre, int intentos){
-            this.nombre = nombre;
-            this.intentos = intentos;
-        }
-
-        public int compareTo(Record o){
-            if(intentos < o.intentos){
-                return -1;
-            }
-            if(intentos > o.intentos){
-                return 1;
-            }
-            return 0;
-        }
-    }
-
     ArrayList<Record> records;
     ArrayAdapter<Record> adapter;
 
@@ -48,6 +27,7 @@ public class Main2Activity extends AppCompatActivity {
         //String temp = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         int intentos = intent.getIntExtra("int_value",0);
         String nombre = intent.getStringExtra("string_name");
+        Record r = new Record(nombre, intentos);
 
         /*// Capture the layout's TextView and set the string as its text
         TextView textView = findViewById(R.id.txtI);
@@ -59,11 +39,15 @@ public class Main2Activity extends AppCompatActivity {
         // Inicialitzem model
         records = new ArrayList<Record>();
         // Afegim alguns exemples
-        records.add( new Record("Jordi",2) );
-        records.add( new Record("Manu",3) );
-        records.add( new Record("Maria",4) );
-        records.add(new Record(nombre, intentos));
+        //records.add( new Record("Jordi",2) );
+        //records.add( new Record("Manu",3) );
+        //records.add( new Record("Maria",4) );
+
+        records = r.getRecords();
+
         Collections.sort(records);
+
+        System.out.print(records);
 
         adapter = new ArrayAdapter<Record>( this, R.layout.list_item, records ){
             public View getView(int pos, View convertView, ViewGroup container)
