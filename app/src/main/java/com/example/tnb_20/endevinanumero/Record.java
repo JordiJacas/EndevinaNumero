@@ -25,6 +25,13 @@ public class Record implements Comparable<Record>{
         return 0;
     }
 
+    public int getIntentos(){
+        return intentos;
+    }
+    public String getNombre(){
+        return nombre;
+    }
+
     public void addRecord(){
         records.add(this);
     }
