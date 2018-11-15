@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Xml;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,10 +50,28 @@ public class Main2Activity extends AppCompatActivity {
         String nombre = intent.getStringExtra("string_name");
         Record r = new Record(nombre, intentos);
 
+        adapter = new ArrayAdapter<Record>( this, R.layout.list_item, records ){
+            public View getView(int pos, View convertView, ViewGroup container)
+            {
+                // getView ens construeix el layout i hi "pinta" els valors de l'element en la posició pos
+                if( convertView==null ) {
+                    // inicialitzem l'element la View amb el seu layout
+                    convertView = getLayoutInflater().inflate(R.layout.list_item, container, false);
+                }
+                // "Pintem" valors (també quan es refresca)
+                ((TextView) convertView.findViewById(R.id.nom)).setText(getItem(pos).nombre);
+                ((TextView) convertView.findViewById(R.id.intents)).setText(Integer.toString(getItem(pos).intentos));
+                return convertView;
+            };
+        };
 
-        // Inicialitzem model
-        records = new ArrayList<Record>();
-        records = r.getRecords();
+        // busquem la ListView i li endollem el ArrayAdapter
+        ListView lv = (ListView) findViewById(R.id.recordsView);
+        lv.setAdapter(adapter);
+    }
+
+    protected  void guardarFichero(){
+        //Inicialitzem model
         String FILENAME = "file.xml";
 
         //Insertamos los records dentro del xml
@@ -64,7 +83,7 @@ public class Main2Activity extends AppCompatActivity {
             serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
             serializer.startTag(null, "root");
 
-            for (Record record:records){
+            /*for (Record record:records){
                 serializer.startTag(null, "name");
                 serializer.text(record.getNombre());
                 serializer.endTag(null, "name");
@@ -72,7 +91,11 @@ public class Main2Activity extends AppCompatActivity {
                 serializer.startTag(null, "record");
                 serializer.text(Integer.toString(record.getIntentos()));
                 serializer.endTag(null, "record");
-            }
+            }*/
+
+            serializer.startTag(null, "name");
+            serializer.text("Jordi");
+            serializer.endTag(null, "name");
 
             serializer.endDocument();
             serializer.flush();
@@ -84,7 +107,11 @@ public class Main2Activity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        /*Leemos todos los records del
+    }
+
+    protected void carregarFichero(){
+        //Leemos todos los records del
+        String FILENAME = "file.xml";
         FileInputStream fis = null;
         InputStreamReader isr = null;
         InputStream is = null;
@@ -96,6 +123,7 @@ public class Main2Activity extends AppCompatActivity {
             isr.read(inputBuffer);
             String data = new String(inputBuffer);
             isr.close();
+            fis.read();
             fis.close();
             is = new ByteArrayInputStream(data.getBytes("UTF-8"));
         } catch (IOException e) {
@@ -120,7 +148,7 @@ public class Main2Activity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        itemsRecord = dom.getElementsByTagName("record");
+        /*itemsRecord = dom.getElementsByTagName("record");
         itemsName = dom.getElementsByTagName("name");
         records = null;
 
@@ -129,28 +157,7 @@ public class Main2Activity extends AppCompatActivity {
             Node itemName = itemsName.item(i);
             records.add(new Record(itemName.getNodeValue(), Integer.parseInt(itemRecord.getNodeValue())));
         }*/
-
-
-        adapter = new ArrayAdapter<Record>( this, R.layout.list_item, records ){
-            public View getView(int pos, View convertView, ViewGroup container)
-            {
-                // getView ens construeix el layout i hi "pinta" els valors de l'element en la posició pos
-                if( convertView==null ) {
-                    // inicialitzem l'element la View amb el seu layout
-                    convertView = getLayoutInflater().inflate(R.layout.list_item, container, false);
-                }
-                // "Pintem" valors (també quan es refresca)
-                ((TextView) convertView.findViewById(R.id.nom)).setText(getItem(pos).nombre);
-                ((TextView) convertView.findViewById(R.id.intents)).setText(Integer.toString(getItem(pos).intentos));
-                return convertView;
-            };
-        };
-
-        // busquem la ListView i li endollem el ArrayAdapter
-        ListView lv = (ListView) findViewById(R.id.recordsView);
-        lv.setAdapter(adapter);
     }
-
 
 
 
