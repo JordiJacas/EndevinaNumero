@@ -37,6 +37,7 @@ public class Main2Activity extends AppCompatActivity {
 
     ArrayList<Record> records;
     ArrayAdapter<Record> adapter;
+    private static final String TAG = "Main2Activity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,11 @@ public class Main2Activity extends AppCompatActivity {
         int intentos = intent.getIntExtra("int_value",0);
         String nombre = intent.getStringExtra("string_name");
         Record r = new Record(nombre, intentos);
+        records = r.getRecords();
+
+        guardarFichero();
+        carregarFichero();
+
 
         adapter = new ArrayAdapter<Record>( this, R.layout.list_item, records ){
             public View getView(int pos, View convertView, ViewGroup container)
@@ -97,6 +103,10 @@ public class Main2Activity extends AppCompatActivity {
             serializer.text("Jordi");
             serializer.endTag(null, "name");
 
+            serializer.startTag(null, "record");
+            serializer.text("2");
+            serializer.endTag(null, "record");
+
             serializer.endDocument();
             serializer.flush();
             fos.close();
@@ -122,6 +132,7 @@ public class Main2Activity extends AppCompatActivity {
             char[] inputBuffer = new char[fis.available()];
             isr.read(inputBuffer);
             String data = new String(inputBuffer);
+            Log.v(TAG, data);
             isr.close();
             fis.read();
             fis.close();
@@ -148,7 +159,7 @@ public class Main2Activity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        /*itemsRecord = dom.getElementsByTagName("record");
+        itemsRecord = dom.getElementsByTagName("record");
         itemsName = dom.getElementsByTagName("name");
         records = null;
 
@@ -156,7 +167,7 @@ public class Main2Activity extends AppCompatActivity {
             Node itemRecord = itemsRecord.item(i);
             Node itemName = itemsName.item(i);
             records.add(new Record(itemName.getNodeValue(), Integer.parseInt(itemRecord.getNodeValue())));
-        }*/
+        }
     }
 
 
