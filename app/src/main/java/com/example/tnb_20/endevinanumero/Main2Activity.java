@@ -37,8 +37,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class Main2Activity extends AppCompatActivity {
 
-    ArrayList<Record> records;
-    ArrayAdapter<Record> adapter;
+    private ArrayList<Record> records = new ArrayList<Record>();
+    private ArrayAdapter<Record> adapter;
     private static final String TAG = "Main2Activity";
 
     @Override
@@ -53,8 +53,6 @@ public class Main2Activity extends AppCompatActivity {
         //String nombre = intent.getStringExtra("string_name");
         //Record r = new Record(nombre, intentos);
         readFile();
-        records = new Record().getRecords();
-
 
         adapter = new ArrayAdapter<Record>( this, R.layout.list_item, records ){
             public View getView(int pos, View convertView, ViewGroup container)
@@ -91,15 +89,12 @@ public class Main2Activity extends AppCompatActivity {
             while ( (linea = bufferedReader.readLine()) != null){
                 Log.v("FILE_ERROR", "linea:" + linea);
                 record = linea.split(":");
-                new Record(record[0],Integer.parseInt(record[1]));
-                stringBuilder.append(linea + System.getProperty("line.separator"));
+                records.add(new Record(record[0],Integer.parseInt(record[1])));
             }
             inputStream.close();
-            linea = stringBuilder.toString();
-
             bufferedReader.close();
 
-            Log.v("FILE_ERROR", linea);
+            Log.v("FILE_ERROR", "Fichero leido con exito");
         } catch (Exception e) {
 
             Log.v("FILE_ERROR", "Error al leer el fichero");
