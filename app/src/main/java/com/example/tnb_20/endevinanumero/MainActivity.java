@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.Xml;
 import android.view.KeyEvent;
 import android.view.View;
@@ -22,9 +23,14 @@ import android.view.View.OnKeyListener;
 
 import org.xmlpull.v1.XmlSerializer;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Random;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
@@ -32,11 +38,11 @@ import static android.provider.AlarmClock.EXTRA_MESSAGE;
 public class MainActivity extends AppCompatActivity {
 
     protected int nIntents;
+    protected boolean isSave = false;
     protected int lastIntents;
     protected int number;
     protected  String tName;
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-
 
 
     @Override
@@ -54,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        preFile();
 
         final Button button = findViewById(R.id.btnEndevina);
         final EditText text = findViewById(R.id.textInt);
@@ -86,9 +94,12 @@ public class MainActivity extends AppCompatActivity {
                     text.setText("");
                     nIntents = 0;
                     number = rNumber.nextInt(100) + 1;
-                    alertView("hello");
+                    alertView(lastIntents);
+
                 }
+
             }
+
         });
     }
 
@@ -116,18 +127,16 @@ public class MainActivity extends AppCompatActivity {
 
     /** Called when the user taps the Send button */
     public void sendMessage(View view) {
-        Intent intent = new Intent(this, Main2Activity.class);
-        //EditText editText = (EditText) findViewById(R.id.textInt);
-        intent.putExtra("int_value", lastIntents);
-        intent.putExtra("string_name", tName);
+       Intent intent = new Intent(this, Main2Activity.class);
+       // intent.putExtra("int_value", lastIntents);
+      //  intent.putExtra("string_name", tName);
 
-        startActivity(intent);
-        //startActivity(intent2);
+       startActivity(intent);
     }
 
-    private void alertView( String message ) {
+    private void alertView(final int intents) {
         final Dialog dialog = new Dialog(MainActivity.this);
-        dialog.setTitle( "Hello" );
+        dialog.setTitle( "" );
         dialog.setContentView(R.layout.layaout_dialog);
         Button btnOK = dialog.findViewById(R.id.btnok);
         Button btnCancel = dialog.findViewById(R.id.btnCancel);
@@ -137,6 +146,8 @@ public class MainActivity extends AppCompatActivity {
                 EditText name = dialog.findViewById(R.id.editTextName);
                 tName = name.getText().toString();
                 dialog.dismiss();
+                //FileHelper.saveToFile(name.getText().toString() + ":" + intents);
+                saveRecord(name.getText().toString(), intents);
             }
         });
 
@@ -147,6 +158,56 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         dialog.show();
+    }
 
+    private void saveRecord(String name, int intents){
+        String textRecord = name + ":" + intents;
+        String linea = null;
+        File file = new File(getApplicationContext().getFilesDir(),"records");
+
+        try {
+            FileOutputStream outputStream = new FileOutputStream(file,true);
+            outputStream.write((textRecord + System.getProperty("line.separator")).getBytes());
+            outputStream.close();
+            Log.v("FILE_ERROR", "Dades guardades");
+
+            FileInputStream inputStream = new FileInputStream (file);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            StringBuilder stringBuilder = new StringBuilder();
+
+            while ( (linea = bufferedReader.readLine()) != null){
+                Log.v("FILE_ERROR", "linea:" + linea);
+                stringBuilder.append(linea + System.getProperty("line.separator"));
+            }
+            inputStream.close();
+            linea = stringBuilder.toString();
+
+            bufferedReader.close();
+
+            Log.v("FILE_ERROR", linea);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.v("FILE_ERROR", "Error escrivint arxiu");
+        }
+    }
+
+    private void preFile(){
+        //String textRecord = "Jordi" + ":" + "1";
+
+        try {
+            File file = new File(getApplicationContext().getFilesDir(),"records");
+            //file.delete();
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            /*FileOutputStream fileOutputStream = new FileOutputStream(file,true);
+            fileOutputStream.write((textRecord + System.getProperty("line.separator")).getBytes());
+            Log.v("FILE_ERROR", "Not Error");*/
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v("FILE_ERROR", "Error");
+        }
     }
 }

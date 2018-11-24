@@ -18,7 +18,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xmlpull.v1.XmlSerializer;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -47,13 +49,11 @@ public class Main2Activity extends AppCompatActivity {
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
-        int intentos = intent.getIntExtra("int_value",0);
-        String nombre = intent.getStringExtra("string_name");
-        Record r = new Record(nombre, intentos);
-        records = r.getRecords();
-
-        guardarFichero();
-        carregarFichero();
+        //int intentos = intent.getIntExtra("int_value",0);
+        //String nombre = intent.getStringExtra("string_name");
+        //Record r = new Record(nombre, intentos);
+        readFile();
+        records = new Record().getRecords();
 
 
         adapter = new ArrayAdapter<Record>( this, R.layout.list_item, records ){
@@ -76,100 +76,33 @@ public class Main2Activity extends AppCompatActivity {
         lv.setAdapter(adapter);
     }
 
-    protected  void guardarFichero(){
-        //Inicialitzem model
-        String FILENAME = "file.xml";
 
-        //Insertamos los records dentro del xml
-        try {
-            FileOutputStream fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
-            XmlSerializer serializer = Xml.newSerializer();
-            serializer.setOutput(fos, "UTF-8");
-            serializer.startDocument(null, Boolean.valueOf((true)));
-            serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
-            serializer.startTag(null, "root");
-
-            /*for (Record record:records){
-                serializer.startTag(null, "name");
-                serializer.text(record.getNombre());
-                serializer.endTag(null, "name");
-
-                serializer.startTag(null, "record");
-                serializer.text(Integer.toString(record.getIntentos()));
-                serializer.endTag(null, "record");
-            }*/
-
-            serializer.startTag(null, "name");
-            serializer.text("Jordi");
-            serializer.endTag(null, "name");
-
-            serializer.startTag(null, "record");
-            serializer.text("2");
-            serializer.endTag(null, "record");
-
-            serializer.endDocument();
-            serializer.flush();
-            fos.close();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    protected void carregarFichero(){
-        //Leemos todos los records del
-        String FILENAME = "file.xml";
-        FileInputStream fis = null;
-        InputStreamReader isr = null;
-        InputStream is = null;
+    public void readFile(){
+        String linea = null;
+        String[] record = null;
+        File file = new File(getApplicationContext().getFilesDir(),"records");
 
         try {
-            fis = getApplicationContext().openFileInput(FILENAME);
-            isr = new InputStreamReader(fis);
-            char[] inputBuffer = new char[fis.available()];
-            isr.read(inputBuffer);
-            String data = new String(inputBuffer);
-            Log.v(TAG, data);
-            isr.close();
-            fis.read();
-            fis.close();
-            is = new ByteArrayInputStream(data.getBytes("UTF-8"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            FileInputStream inputStream = new FileInputStream (file);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            StringBuilder stringBuilder = new StringBuilder();
 
-        NodeList itemsRecord = null;
-        NodeList itemsName = null;
-        Document dom = null;
+            while ( (linea = bufferedReader.readLine()) != null){
+                Log.v("FILE_ERROR", "linea:" + linea);
+                record = linea.split(":");
+                new Record(record[0],Integer.parseInt(record[1]));
+                stringBuilder.append(linea + System.getProperty("line.separator"));
+            }
+            inputStream.close();
+            linea = stringBuilder.toString();
 
-        try {
-            Record xmlDataObj;
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            dom = db.parse(is);
-            dom.getDocumentElement().normalize();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        }
+            bufferedReader.close();
 
-        itemsRecord = dom.getElementsByTagName("record");
-        itemsName = dom.getElementsByTagName("name");
-        records = null;
+            Log.v("FILE_ERROR", linea);
+        } catch (Exception e) {
 
-        for (int i=0; i<itemsRecord.getLength();i++){
-            Node itemRecord = itemsRecord.item(i);
-            Node itemName = itemsName.item(i);
-            records.add(new Record(itemName.getNodeValue(), Integer.parseInt(itemRecord.getNodeValue())));
+            Log.v("FILE_ERROR", "Error al leer el fichero");
         }
     }
-
-
-
 }
