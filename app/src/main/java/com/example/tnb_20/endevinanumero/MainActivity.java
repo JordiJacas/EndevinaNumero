@@ -3,7 +3,9 @@ package com.example.tnb_20.endevinanumero;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Random;
+import java.util.UUID;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
@@ -40,9 +43,11 @@ public class MainActivity extends AppCompatActivity {
     protected int nIntents;
     protected boolean isSave = false;
     protected int lastIntents;
+    protected String nameImage;
     protected int number;
     protected  String tName;
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
 
     @Override
@@ -95,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
                     nIntents = 0;
                     number = rNumber.nextInt(100) + 1;
                     alertView(lastIntents);
-
                 }
 
             }
@@ -136,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void alertView(final int intents) {
         final Dialog dialog = new Dialog(MainActivity.this);
+        final String[] datos = {null, Integer.toString(intents)};
         dialog.setTitle( "" );
         dialog.setContentView(R.layout.layaout_dialog);
         Button btnOK = dialog.findViewById(R.id.btnok);
@@ -145,9 +150,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 EditText name = dialog.findViewById(R.id.editTextName);
                 tName = name.getText().toString();
+                datos[0] = name.getText().toString();
                 dialog.dismiss();
-                //FileHelper.saveToFile(name.getText().toString() + ":" + intents);
-                saveRecord(name.getText().toString(), intents);
+
+                //Encender la camar para hacer la foto;
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+
+                saveRecord(name.getText().toString(), intents, nameImage);
             }
         });
 
@@ -160,8 +172,8 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void saveRecord(String name, int intents){
-        String textRecord = name + ":" + intents;
+    private void saveRecord(String name, int intents, String name_image){
+        String textRecord = name + ":" + intents + ":" + name_image;
         String linea = null;
         File file = new File(getApplicationContext().getFilesDir(),"records");
 
@@ -193,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void preFile(){
-        //String textRecord = "Jordi" + ":" + "1";
 
         try {
             File file = new File(getApplicationContext().getFilesDir(),"records");
@@ -201,13 +212,30 @@ public class MainActivity extends AppCompatActivity {
             if (!file.exists()) {
                 file.createNewFile();
             }
-
-            /*FileOutputStream fileOutputStream = new FileOutputStream(file,true);
-            fileOutputStream.write((textRecord + System.getProperty("line.separator")).getBytes());
-            Log.v("FILE_ERROR", "Not Error");*/
         } catch (IOException e) {
             e.printStackTrace();
             Log.v("FILE_ERROR", "Error");
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //nombre aleatorio
+        nameImage = "image_" + UUID.randomUUID().toString() + ".jpg";
+
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            // guardar a disc
+            try {
+                FileOutputStream out = openFileOutput(nameImage, MODE_PRIVATE);
+                imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                out.close();
+                Log.v("TAG OK", "Arxiu ok");
+            } catch (Exception e) {
+                Log.v("FILE ERROR", "Error escrivint arxiu");
+                e.printStackTrace();
+            }
         }
     }
 }

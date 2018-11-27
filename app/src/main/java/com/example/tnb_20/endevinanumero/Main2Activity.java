@@ -2,6 +2,7 @@ package com.example.tnb_20.endevinanumero;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.util.Xml;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -65,6 +67,8 @@ public class Main2Activity extends AppCompatActivity {
                 // "Pintem" valors (també quan es refresca)
                 ((TextView) convertView.findViewById(R.id.nom)).setText(getItem(pos).nombre);
                 ((TextView) convertView.findViewById(R.id.intents)).setText(Integer.toString(getItem(pos).intentos));
+                Uri uri = Uri.fromFile(getItem(pos).name_image);
+                ((ImageView) convertView.findViewById(R.id.imageView)).setImageURI(uri);
                 return convertView;
             };
         };
@@ -89,7 +93,7 @@ public class Main2Activity extends AppCompatActivity {
             while ( (linea = bufferedReader.readLine()) != null){
                 Log.v("FILE_ERROR", "linea:" + linea);
                 record = linea.split(":");
-                records.add(new Record(record[0],Integer.parseInt(record[1])));
+                records.add(new Record(record[0],Integer.parseInt(record[1]), new File("/data/data/com.example.tnb_20.endevinanumero/files/" + record[2])));
             }
             inputStream.close();
             bufferedReader.close();
