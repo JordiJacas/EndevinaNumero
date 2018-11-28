@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     protected int nIntents;
     protected boolean isSave = false;
     protected int lastIntents;
-    protected String nameImage;
     protected int number;
     protected  String tName;
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
@@ -158,8 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 }
-
-                saveRecord(name.getText().toString(), intents, nameImage);
+                saveRecord(name.getText().toString(), intents);
             }
         });
 
@@ -172,32 +170,16 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void saveRecord(String name, int intents, String name_image){
-        String textRecord = name + ":" + intents + ":" + name_image;
-        String linea = null;
+    private void saveRecord(String name, int intents){
+        String textRecord = name + ":" + intents + ":";
         File file = new File(getApplicationContext().getFilesDir(),"records");
 
         try {
             FileOutputStream outputStream = new FileOutputStream(file,true);
-            outputStream.write((textRecord + System.getProperty("line.separator")).getBytes());
+            outputStream.write(textRecord.getBytes());
             outputStream.close();
             Log.v("FILE_ERROR", "Dades guardades");
 
-            FileInputStream inputStream = new FileInputStream (file);
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            StringBuilder stringBuilder = new StringBuilder();
-
-            while ( (linea = bufferedReader.readLine()) != null){
-                Log.v("FILE_ERROR", "linea:" + linea);
-                stringBuilder.append(linea + System.getProperty("line.separator"));
-            }
-            inputStream.close();
-            linea = stringBuilder.toString();
-
-            bufferedReader.close();
-
-            Log.v("FILE_ERROR", linea);
         } catch (Exception e) {
             e.printStackTrace();
             Log.v("FILE_ERROR", "Error escrivint arxiu");
@@ -220,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //nombre aleatorio
-        nameImage = "image_" + UUID.randomUUID().toString() + ".jpg";
+       String nameImage = "image_" + UUID.randomUUID().toString() + ".jpg";
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
@@ -231,11 +213,30 @@ public class MainActivity extends AppCompatActivity {
                 FileOutputStream out = openFileOutput(nameImage, MODE_PRIVATE);
                 imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                 out.close();
-                Log.v("TAG OK", "Arxiu ok");
+
+                saveImage(nameImage);
+                Log.v("FILE ERROR", "Imatege Guradad");
+
             } catch (Exception e) {
                 Log.v("FILE ERROR", "Error escrivint arxiu");
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void saveImage(String image){
+        String textRecord = image;
+        File file = new File(getApplicationContext().getFilesDir(),"records");
+
+        try {
+            FileOutputStream outputStream = new FileOutputStream(file,true);
+            outputStream.write((textRecord + System.getProperty("line.separator")).getBytes());
+            outputStream.close();
+            Log.v("FILE_ERROR", "Dades guardades");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.v("FILE_ERROR", "Error escrivint arxiu");
         }
     }
 }
